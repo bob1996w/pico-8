@@ -1,0 +1,39 @@
+changelog v0.6
+================
+[plan-add] new control schemes for html-based 6 button without using 2p's button
+[plan-add] record settings in persistent save file
+[plan-add] maybe some fix to the ugly background?
+[plan-add] add display how much score is added
+[plan-add] b2b tetris' score
+[plan-fix] that music
+
+changelog v0.51
+================
+[internal fix] reorganize code to code tabs
+
+changelog v0.5
+================
+[add] combine touch-html feature
+[add] choose whether add random tiles for up to 15 lines
+[add] now you should really let them fall quicker
+[remove] the "display line" option, as it is being unused now
+[change] the time of lock waits longer
+[change] then starting time of drop is longer
+[change] set 6 changed from  "X" to "O".
+
+changelog v0.4a for html
+================
+[add] html support joysticks, but not able to use hold feature.
+Thank headjump for making this awesome template. (https://github.com/headjump/pico8_html_template)
+
+changelog v0.4
+================
+[add] fuckin' scoreboard, may contain bugs if you can get 2^31 points.
+
+changelog v0.3
+================
+[add]revamped "others" screen(the original control screen)
+[add]there is really control informations
+[add]block counter
+[fix]maybe fixed the clipping blocks?
+[fix]first block hold cannot be performed twice

@@ -24,12 +24,17 @@ fullscreen_method 0 // 0 maximized window (linux)  1 borderless desktop-sized wi
 
 // :: System Settings
 
-frame_sleep_ms 5 // number of milliseconds to sleep each frame. To save laptop battery power, try 20
+foreground_sleep_ms 5 // number of milliseconds to sleep each frame. Try 10 to conserve battery power
 
-sessions 273 // number of times program has been run
+background_sleep_ms 20 // number of milliseconds to sleep each frame when running in the background
+
+sessions 488 // number of times program has been run
 
 // (scancode) hold this key down and left-click to simulate right-click
 rmb_key 0 // 0 for none  226 for LALT
+
+// 0:off  1: ignore SDL_TEXTINPUT and use SDL_GetKeyboardState instead (mapped to a US layout)
+emulate_textinput 0 
 
 // Desktop for saving screenshots etc. Defaults to $HOME/Desktop
 desktop_path 
@@ -45,7 +50,7 @@ mix_buffer_size 2048 // usually 1024. Try 2048 if you get choppy sound
 
 // :: 
 
-version 0.1.11
+version 0.1.11g
 
 
 // Location of pico-8's root folder
@@ -81,4 +86,14 @@ gif_scale 2
 
 // when 1 can enter glyphs using shift-A..Z
 shift_glyphs 1
+
+// 0 for off. 1 to notify whenever unsaved changes are backed up
+show_backup_messages 1
+
+// 0 for off. 1 to allow control of a cart's framerate due to host machine's cpu capacity (recommended)
+host_framerate_control 1
+
+// filter splore content
+// 0 for no filter (18+)  1 medium (13+)  2 maximum (kid-friendly)
+content_filter 1
 
