@@ -228,7 +228,7 @@ function _init()
   poke(0x5f80,1)
   cartdata("bob_blocks")
 		--inithi()
-  t=0
+  timer=0
   sel=1
   s_menu()
 end
@@ -241,7 +241,7 @@ end
 
 function u_menu()
   --call s_game
-  t+=1
+  timer+=1
   if(btnp(2) and sel>1)sel-=1
   if(btnp(3) and sel<#setdisp+5)sel+=1
 
@@ -1141,13 +1141,13 @@ function gets(val)
 end
 
 function s_gameover()
-  t=0
+  timer=0
   _update60=u_gameover
   _draw=d_gameover
 end
 
 function u_gameover()
-  t+=1
+  timer+=1
   if btnp(4) then
     if checkhi(sc.s) then
       s_hi()
@@ -1161,7 +1161,7 @@ end
 function d_gameover()
   rectfill(pa.x+10,pa.y+16,pa.x+50,pa.y+26,0)
   rect(pa.x+10,pa.y+16,pa.x+50,pa.y+26,7)
-  print("game over",pa.x+13,pa.y+19,t%16)
+  print("game over",pa.x+13,pa.y+19,timer%16)
 end
 
 --[[

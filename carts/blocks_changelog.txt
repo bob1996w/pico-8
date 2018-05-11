@@ -7,6 +7,10 @@ changelog v0.6
 [plan-add] b2b tetris' score
 [plan-fix] that music
 
+changelog v0.52
+================
+[internal fix] fix confusion between global value 't'(true) and 't'(timer)
+
 changelog v0.51
 ================
 [internal fix] reorganize code to code tabs
