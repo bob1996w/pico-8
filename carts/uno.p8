@@ -353,11 +353,14 @@ function drawhand(pl,ly,x,y,hd,ft)
 			if hd==nil and ft==nil then
 				drawcard(hand[pl][i],x+(i-1)*9,y)
 			elseif ft!=nil then
+				drawcard(hand[pl][i],x+(i-1)*9,y)
+				--[[
 				if isok(hand[pl][i],pk()) then
 					drawcard(hand[pl][i],x+(i-1)*9,y)
 				else
 					drawcard({cl=-2},x+(i-1)*9,y)
 				end
+				]]
 			else
 				drawcard({cl=-1},x+(i-1)*9,y)
 			end
@@ -377,13 +380,14 @@ end
 --what's going on with this function?
 function sorthand()
 	for i=1,(#hand[1])-1 do
-		for j=1,(#hand[1])-i do
-			if not compcard(hand[1][j],hand[1][j+1]) then
-				local temp={cl=hand[1][j].cl,n=hand[1][j].n}
-				hand[1][j].cl=hand[1][j+1].cl
-				hand[1][j].n=hand[1][j+1].n
-				hand[1][j+1].cl=temp.cl
-				hand[1][j+1].n=temp.n
+		for j=2,(#hand[1])-i+1 do
+			if not compcard(hand[1][j-1],hand[1][j]) then
+				local temp_cl=hand[1][j].cl
+				local temp_n=hand[1][j].n
+				hand[1][j].cl=hand[1][j-1].cl
+				hand[1][j].n=hand[1][j-1].n
+				hand[1][j-1].cl=temp_cl
+				hand[1][j-1].n=temp_n
 			end
 		end
 	end
@@ -392,7 +396,8 @@ end
 --true if c1 should be placed before c2
 function compcard(c1,c2)
 	if c1.cl<c2.cl then return true
-	elseif c1.n<c2.n then return true
+	elseif c1.cl>c2.cl then return false
+	elseif c1.n<=c2.n then return true
 	else return false end
 end
 --
