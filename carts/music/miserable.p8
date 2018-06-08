@@ -1,0 +1,364 @@
+pico-8 cartridge // http://www.pico-8.com
+version 16
+__lua__
+--[[
+fixme:
+when the note miss because of
+not pressing button, the chain
+will not reset.
+]]
+function _init()
+	music(0)
+	pl={x=0,y=0,sp=1}
+	t=-1
+	alt_angle=0
+	c_reg=48
+	last_judge=""
+	ani_ripples={}
+	chain=0
+end
+
+arr2sp={0,8,0,5,0,6,0,7,0}
+arr2offset={
+	{x=-8,y=8},
+	{x=0,y=8},
+	{x=8,y=8},
+	{x=-8,y=0},
+	{x=0,y=0},
+	{x=8,y=0},
+	{x=-8,y=-8},
+	{x=0,y=-8},
+	{x=8,y=-8},
+}
+
+function _update()
+	t+=1
+	if t>384 then
+		alt_angle=(t-384)/384
+	end
+	pl.x=63+40*sin(t/c_reg+alt_angle)
+	pl.y=63+40*cos(t/c_reg+alt_angle)
+	u_anir(ani_ripples)
+	if btnp(❎) or btnp(🅾️) then
+		for i=1,#notedata do
+			local nt=notedata[i].t
+			if not notedata[i].h and
+				abs(t-nt)<=6 then
+				local h=false
+				if abs(t-nt)<=5 and abs(t-nt)>3 then
+					last_judge="good"
+					h=true
+				elseif abs(t-nt)<=3 and abs(t-nt)<1 then
+					last_judge="cool"
+					h=true
+				elseif abs(t-nt)>5 then
+					last_judge="miss"
+				else
+					last_judge="great"
+					h=true
+				end
+				if h then
+					add(ani_ripples,n_anir(last_judge,
+						pl.x+3,pl.y+3))
+					chain=n_chain(chain)
+				else
+					chain=0
+				end
+				notedata[i].h=h
+				break
+			end
+		end
+	end
+end
+
+function _draw()
+	cls()
+	if t%12==0 and t<384 then
+		camera(6,0)
+	else
+		camera()
+	end
+	spr(pl.sp,pl.x-3,pl.y-3)
+	circ(63,63,40)
+	for i=1,#notedata do
+		local nt=notedata[i].t
+		if nt>=t-20 and nt<t-5
+			and not notedata[i].h then
+			print("miss",pl.x+5,pl.y+5,12)
+		end
+		if nt>=t-5 and nt<t+36 then
+			local draw=true
+			local rad=40
+			if notedata[i].i!=nil then
+				local ndi=notedata[i].i
+				if t<=nt-(ndi[1]+ndi[2]) then
+					draw=false
+				elseif t<nt-ndi[2] then
+					rad=rad*(1+(t-(nt-ndi[2]))/ndi[1])
+				end
+			end
+			if(notedata[i].h)draw=false
+			if draw then
+				local sprx=63-3+rad*sin(nt/c_reg+alt_angle)
+				local spry=63-3+rad*cos(nt/c_reg+alt_angle)
+				if notedata[i].c!=nil then
+					pal(7,notedata[i].c)
+ 				pal(12,notedata[i].c)
+				end
+				if notedata[i].n==4 then
+					spr(4,sprx,spry)
+ 				for j=1,#notedata[i].d do
+ 					spr(arr2sp[notedata[i].d[j]],
+ 						sprx+arr2offset[notedata[i].d[j]].x,
+  					spry+arr2offset[notedata[i].d[j]].y
+ 					)
+ 				end
+				else
+					spr(notedata[i].n,
+						sprx,
+ 					spry)
+				end
+			end
+			pal()
+		end
+	end
+	d_anir(ani_ripples)
+	d_lastjudge(last_judge)
+	if chain>0 then
+		rprint(""..chain.."chain",127,0,7)
+	end
+	print(t,0,0,6)
+end
+-->8
+--note data
+notedata={
+	{t=0,n=3,h=false},
+	{t=12,n=3,h=false},
+	{t=24,n=3,h=false},
+	{t=36,n=3,h=false},
+	{t=48,n=3,h=false},
+	{t=336,n=3,c=10,h=false},
+	{t=340,n=3,c=10,h=false},
+	{t=344,n=3,c=10,h=false},
+	{t=348,n=3,c=10,h=false},
+	{t=352,n=3,c=10,h=false},
+	{t=356,n=3,c=10,h=false},
+	{t=360,n=3,h=false},
+	{t=363,n=3,h=false},
+	{t=366,n=3,h=false},
+	{t=369,n=3,h=false},
+	{t=372,n=3,h=false},
+	{t=375,n=3,h=false},
+	{t=378,n=3,h=false},
+	{t=381,n=3,h=false},
+	{t=384,n=3,h=false},
+	
+	{t=393,n=2,h=false},
+	{t=402,n=3,h=false},
+	{t=405,n=3,h=false},
+	{t=408,n=3,h=false},
+	
+	{t=417,n=2,h=false},
+	{t=426,n=3,h=false},
+	{t=429,n=3,h=false},
+	{t=432,n=3,h=false},
+	
+	{t=441,n=2,h=false},
+	{t=450,n=3,h=false},
+	{t=453,n=3,h=false},
+	{t=456,n=3,h=false},
+	
+	{t=465,n=2,h=false},
+	{t=474,n=4,d={4,6},c=8,h=false},
+	{t=480,n=3,h=false},
+	
+	{t=489,n=2,h=false},
+	{t=498,n=3,h=false},
+	{t=501,n=3,h=false},
+	{t=504,n=3,h=false},
+	
+	{t=513,n=2,h=false},
+	{t=522,n=3,h=false},
+	{t=525,n=3,h=false},
+	{t=528,n=3,h=false},
+	
+	{t=537,n=2,h=false},
+	{t=546,n=3,h=false},
+	{t=549,n=3,h=false},
+	{t=552,n=3,h=false},
+	{t=558,n=4,d={6},c=11,h=false},
+	{t=564,n=4,d={4},c=11,h=false},
+	{t=570,n=4,d={6},c=11,h=false},
+	
+	{t=576,n=3,h=false},
+	{t=582,n=2,h=false},
+	{t=588,n=3,h=false},
+	{t=591,n=3,h=false},
+	{t=594,n=3,h=false},
+	{t=597,n=3,h=false},
+	{t=600,n=3,h=false},
+	
+	{t=606,n=2,h=false},
+	{t=612,n=3,h=false},
+	{t=615,n=3,h=false},
+	{t=618,n=3,h=false},
+	{t=621,n=3,h=false},
+	{t=624,n=3,h=false},
+	
+	{t=630,n=2,h=false},
+	{t=636,n=3,h=false},
+	{t=639,n=3,h=false},
+	{t=642,n=3,h=false},
+	{t=645,n=3,h=false},
+	{t=648,n=3,h=false},
+	{t=651,n=3,h=false},
+	{t=654,n=3,h=false},
+	{t=657,n=3,h=false},
+	
+	{t=660,n=3,c=8,h=false},
+	{t=662,n=3,c=8,i={7,10},h=false},
+	{t=664,n=3,c=8,i={7,10},h=false},
+	{t=666,n=3,c=8,i={7,10},h=false},
+	
+	{t=672,n=3,h=false},
+	
+	{t=678,n=3,c=8,h=false},
+	{t=680,n=3,c=8,i={7,10},h=false},
+	{t=682,n=3,c=8,i={7,10},h=false},
+	{t=684,n=3,c=8,i={7,10},h=false},
+	
+	{t=690,n=3,c=8,h=false},
+	{t=692,n=3,c=8,i={7,10},h=false},
+	{t=694,n=3,c=8,i={7,10},h=false},
+	{t=696,n=3,c=8,i={7,10},h=false},
+	
+	{t=702,n=3,c=8,h=false},
+	{t=704,n=3,c=8,i={7,10},h=false},
+	{t=706,n=3,c=8,i={7,10},h=false},
+	{t=708,n=3,c=8,i={7,10},h=false},
+	
+	{t=714,n=3,c=8,i={7,10},h=false},
+	{t=716,n=3,c=8,i={7,10},h=false},
+	{t=718,n=3,c=8,i={7,10},h=false},
+	
+	{t=720,n=0,h=false},
+	{t=726,n=0,h=false},
+	{t=732,n=0,h=false},
+	{t=738,n=0,h=false},
+	{t=744,n=0,h=false},
+	
+}
+-->8
+--score parser
+function parse(str)
+	local notes={}
+	local now_time=0
+	
+	return notes
+end
+
+
+
+
+-->8
+--ani and utility fun
+function n_chain(chain)
+	if chain<10 then
+		return chain+1
+	elseif chain<100 then
+		return chain+2
+	else
+		return chain+4
+	end
+end
+
+function n_anir(judge,_x,_y)
+	local ani={
+		t=10,
+		x=_x,
+		y=_y,
+		c=7
+	}
+	if judge=="great" then
+		ani.c=10
+	elseif judge=="cool" then
+		ani.c=14
+	elseif judge=="good" then
+		ani.c=12
+	end
+	return ani
+end
+function u_anir(ani_ripples)
+	for ani in all(ani_ripples) do
+		if ani.t>0 then
+			ani.t-=1
+		else
+			del(ani_ripples,ani)
+		end
+	end
+end
+function d_anir(ani_ripples)
+	for ani in all(ani_ripples) do
+		circ(ani.x,ani.y,20-2*ani.t,ani.c)ani.t-=1
+	end
+end
+function d_lastjudge(judge)
+	local c=7
+	local d=true
+	if judge=="great" then
+		c=10
+	elseif judge=="cool" then
+		c=14
+	elseif judge=="good" then
+		c=12
+	elseif judge=="miss" then
+		d=false
+	end
+	if d then
+		print(judge,127-4*#judge,10,c)
+	end
+end
+
+function rprint(s,x,y,c)
+	print(s,x-4*#s,y,c)
+end
+__gfx__
+00000000006bb6000cccccc000000000000000000000000000000000000700000007000000000000000000000000000000000000000000000000000000000000
+00000000060bb060c000000c00777700000000000070000000000700007770000007000000000000000000000000000000000000000000000000000000000000
+00700700600bb006c0cccc0c07000070007777000770000000000770077777000007000000000000000000000000000000000000000000000000000000000000
+00077000bbbbbbbbc0cccc0c07000070007777007777777777777777000700000007000000000000000000000000000000000000000000000000000000000000
+00077000bbbbbbbbc0cccc0c07000070007777000770000000000770000700000007000000000000000000000000000000000000000000000000000000000000
+00700700600bb006c0cccc0c07000070007777000070000000000700000700000777770000000000000000000000000000000000000000000000000000000000
+00000000060bb060c000000c00777700000000000000000000000000000700000077700000000000000000000000000000000000000000000000000000000000
+00000000006bb6000cccccc000000000000000000000000000000000000700000007000000000000000000000000000000000000000000000000000000000000
+__sfx__
+010c00001877318703000000000018773000000000000000187731870300000000001877300000000000000018773187030000000000187730000000000000001877318703000000000018773000000000000000
+01100018213300030021330003002333024330213300030021330003002333024330213300030021330003002333024330213302630021330003001c330203001e30000300003000030000300003000030000300
+011000182133000300213300030023330243302133000300213300030023330243302133000300213300030023330243302633026300243300030024330203501e30000300003000030000300003000030000300
+011000062834029340283402634028340263400030000300183000030000300003001830000300003000030018300003000030000300183000030000300003001830000300003000030018300003000030000300
+010c0008243401c3402134024340233401c3402034023340213000030000300213000030000300233002430021300003000030021300003000030023300243002130000300003002130000300003001c30000300
+010300001877318773007000070018703007000070000700187031870300700007000070000700007000070018773187730070000700007000070000700007001870318703007000070000700007000070000700
+01060000187731870321000000002300024000210000000018773000002300024000210000000021000000001877318703210002600021000000001c000200001877300000000000000000000000000000000000
+011000182133000300213300030023330243302133000300213300030023330243300030000300233002430021300003000030021300003000030023300243002130000300003002130000300003001c30000300
+010c00002137000300213002137023300243002337024370213700030023300213702130000300233702437021370243002130021370213000030023370243702137000300003002137000300003001c37000300
+000c00002133000300213002137023300243002337024370213700030023300213702130000300233702437021370243002130021370213000030023370243702637000300243702430023370003002037020300
+010c00002135000300213002135023300243002335024350213500030023300213502130000300233502435021350243002130021350213000030023350243502135000300003002135000300003001c35000300
+010c0000213200030021300213202330024300233202432021320003002330021320213000030023320243202835000000283500000028350000002835000000283500000000000000001c350000000000000000
+010d00001553215532155321553215532155321553215532155321553215532155321553215532155321553215532155321553215532155321553215532155321553215532155321553221700217002170021700
+010c00001155211552115221152211522115221152211522115221152211522115221152211522115221152211522115221152211522115221152211522115221152211522115221152211700117001170011700
+010c00000e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5520e5000e5000e5000e500
+010c00181055210552105521055210552105521055210552105521055210552105521055210552105521055210552105521055210552105521055210552105521055210552105521055210500105001050010500
+010c00001067514605106750f605106751067510675106751067510605106751460510675106751067510675106750f605106750f605106751067510675106751a6750f6051c675176051d670216702467010605
+010c00002467510600286702b6702d670106002f67039670306703b60532670356703767010600396703b670106000c0000c00000000000000000000000000000000000000000000000000000000000000000000
+__music__
+01 01000c44
+00 02000c44
+00 01000c44
+00 07060c44
+00 03054344
+00 04054344
+00 08000c44
+00 09000d44
+00 0a000e10
+04 0b000f11
+
